@@ -1,11 +1,13 @@
-import { SecretManager } from "../index.js";
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { SecretManager } from "../index.js";
 
 jest.mock("@google-cloud/secret-manager", () => ({
   SecretManagerServiceClient: jest.fn().mockImplementation(() => ({
-    accessSecretVersion: jest.fn().mockResolvedValue([
-      { payload: { data: Buffer.from("integration-secret") } },
-    ]),
+    accessSecretVersion: jest
+      .fn()
+      .mockResolvedValue([
+        { payload: { data: Buffer.from("integration-secret") } },
+      ]),
   })),
 }));
 
@@ -15,9 +17,9 @@ describe("SecretManager public API", () => {
     const env = { getValue: jest.fn().mockReturnValue(projectId) };
     const secretManager = new SecretManager(env);
 
-    await expect(secretManager.getSecret("integration-secret-name")).resolves.toBe(
-      "integration-secret",
-    );
+    await expect(
+      secretManager.getSecret("integration-secret-name"),
+    ).resolves.toBe("integration-secret");
 
     expect(env.getValue).toHaveBeenCalledWith("GOOGLE_PROJECT_ID");
     expect(SecretManagerServiceClient).toHaveBeenCalledWith({ projectId });

@@ -27,13 +27,16 @@ describe("SecretManager", () => {
 
   it("retrieves and returns the latest secret payload", async () => {
     const secretManager = new SecretManager(env);
-    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]?.value;
+    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]
+      ?.value;
     const accessSecretVersion = jest.mocked(client.accessSecretVersion);
     accessSecretVersion.mockResolvedValue([
       { payload: { data: Buffer.from("sensitive-value") } },
     ]);
 
-    await expect(secretManager.getSecret(secretName)).resolves.toBe("sensitive-value");
+    await expect(secretManager.getSecret(secretName)).resolves.toBe(
+      "sensitive-value",
+    );
     expect(accessSecretVersion).toHaveBeenCalledWith({
       name: `projects/${projectId}/secrets/${secretName}/versions/latest`,
     });
@@ -41,7 +44,8 @@ describe("SecretManager", () => {
 
   it("throws when the secret response has no payload", async () => {
     const secretManager = new SecretManager(env);
-    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]?.value;
+    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]
+      ?.value;
     jest.mocked(client.accessSecretVersion).mockResolvedValue([{}]);
 
     await expect(secretManager.getSecret(secretName)).rejects.toThrow(
@@ -51,10 +55,11 @@ describe("SecretManager", () => {
 
   it("throws when the secret payload is empty", async () => {
     const secretManager = new SecretManager(env);
-    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]?.value;
-    jest.mocked(client.accessSecretVersion).mockResolvedValue([
-      { payload: { data: Buffer.from("") } },
-    ]);
+    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]
+      ?.value;
+    jest
+      .mocked(client.accessSecretVersion)
+      .mockResolvedValue([{ payload: { data: Buffer.from("") } }]);
 
     await expect(secretManager.getSecret(secretName)).rejects.toThrow(
       `Secret ${secretName} has no payload.`,
@@ -63,7 +68,8 @@ describe("SecretManager", () => {
 
   it("propagates errors from Google Secret Manager", async () => {
     const secretManager = new SecretManager(env);
-    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]?.value;
+    const client = jest.mocked(SecretManagerServiceClient).mock.results[0]
+      ?.value;
     const apiError = new Error("Permission denied");
     jest.mocked(client.accessSecretVersion).mockRejectedValue(apiError);
 
