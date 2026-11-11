@@ -1,0 +1,59 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: build",
+			"detail": "Kompiliert das Projekt für Entwicklung"
+		},
+		{
+			"type": "npm",
+			"script": "build-test",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: build-test",
+			"detail": "Kompiliert das Projekt für Tests"
+		},
+		{
+			"type": "npm",
+			"script": "build-prod",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: build-prod",
+			"detail": "Run Produktions-Build (Nutzt tsconfig.prod.json)"
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "npm: test",
+			"detail": "Führt Unit- und Integrationstests aus"
+		},
+		{
+			"type": "npm",
+			"script": "test:unit",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "npm: test:unit",
+			"detail": "Führt ausschließlich Unit-Tests aus"
+		},
+		{
+			"type": "npm",
+			"script": "test:int",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "npm: test:int",
+			"detail": "Führt ausschließlich Integrationstests aus"
+		}
+	]
+}

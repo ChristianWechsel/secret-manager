@@ -1,0 +1,53 @@
+steps:
+  - name: "node:24"
+    entrypoint: "npm"
+    args: ["audit", "--audit-level=high"]
+
+  - name: "node:24"
+    entrypoint: "npm"
+    args: ["ci"]
+
+  - name: "node:24"
+    entrypoint: "npm"
+    args: ["test"]
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    secretEnv: ["NPM_TOKEN"]
+    args:
+      - "-c"
+      - |
+        set -e
+
+        if [ -n "$TAG_NAME" ]; then
+          echo "Tag release detected ($TAG_NAME). Preparing public npm publish..."
+          echo "//registry.npmjs.org/:_authToken=$$NPM_TOKEN" > /workspace/.npmrc-publish
+          echo "registry=https://registry.npmjs.org/" >> /workspace/.npmrc-publish
+        else
+          echo "Internal push detected. Preparing Artifact Registry publish..."
+          TOKEN=$(gcloud auth print-access-token)
+          AUTH_B64=$(echo -n "oauth2accesstoken:$${TOKEN}" | base64 | tr -d '\n')
+          
+          echo "${_SCOPE}:registry=https://$LOCATION-npm.pkg.dev/$PROJECT_ID/${_GAR_REPOSITORY}/" > /workspace/.npmrc-publish
+          echo "//$LOCATION-npm.pkg.dev/$PROJECT_ID/${_GAR_REPOSITORY}/:_auth=$${AUTH_B64}" >> /workspace/.npmrc-publish
+          echo "//$LOCATION-npm.pkg.dev/$PROJECT_ID/${_GAR_REPOSITORY}/:email=not.valid@example.com" >> /workspace/.npmrc-publish
+        fi
+
+  - name: "node:24"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        if [ -n "$TAG_NAME" ]; then
+          npm publish --userconfig=/workspace/.npmrc-publish --access public
+        else
+          npm publish --userconfig=/workspace/.npmrc-publish
+        fi
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/${_NPM_SECRET_NAME}/versions/latest
+      env: NPM_TOKEN
+
+options:
+  logging: CLOUD_LOGGING_ONLY

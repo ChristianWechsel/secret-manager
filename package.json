@@ -1,0 +1,53 @@
+{
+  "name": "@christian-wechsel/secret-manager",
+  "version": "0.1.0",
+  "description": "A TypeScript client for retrieving secrets from Google Cloud Secret Manager.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "npm run build-test && jest",
+    "clean": "./bin/clean.sh",
+    "prebuild": "npm run clean",
+    "build": "tsc --project tsconfig.json",
+    "prebuild-test": "npm run clean",
+    "build-test": "tsc --project tsconfig.test.json",
+    "prebuild-prod": "npm run clean",
+    "build-prod": "tsc --project tsconfig.prod.json",
+    "prepublishOnly": "npm run build-prod",
+    "test:unit": "set NODE_ENV=test && npm run build-test && jest --selectProjects Unit",
+    "test:int": "set NODE_ENV=test && npm run build-test && jest --selectProjects Integration",
+    "debug": "node --inspect-brk dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristianWechsel/secret-manager.git"
+  },
+  "keywords": [
+    "google-cloud",
+    "secret-manager",
+    "secrets",
+    "gcp",
+    "typescript",
+    "node.js"
+  ],
+  "author": "Christian Wechsel <npm@christian-wechsel.com>",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ChristianWechsel/secret-manager/issues"
+  },
+  "homepage": "https://github.com/ChristianWechsel/secret-manager#readme",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "jest": "^30.5.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@google-cloud/secret-manager": "^8.0.0"
+  }
+}
